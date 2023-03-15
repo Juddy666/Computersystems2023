@@ -41,7 +41,7 @@ CHIP ALU {
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
-    PARTS
+    PARTS:
     //"Zero" the x
     Mux16(a=x,b[0..15]=false,sel=zx,out=zdx); 
     
