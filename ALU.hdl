@@ -55,13 +55,13 @@ CHIP ALU {
     Mux16(a=zdy,b=noty,sel=ny,out=ndy);
 
     //x+y
-    Add16(a=ndx,b=ndy,out=xaddy);
+    Add16(a=ndx,b=ndy,out=xplusy);
     
     //x&y
     And16(a=ndx,b=ndy,out=xandy);  
 
     //chose function
-    Mux16(a=xandy,b=xaddy,sel=f,out=fxy); 
+    Mux16(a=xandy,b=xplusy,sel=f,out=fxy); 
 
     Not16(in=fxy,out=nfxy);      
     Mux16(a=fxy,b=nfxy,sel=no,out=oo);  
