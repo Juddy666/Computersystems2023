@@ -42,37 +42,28 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    //"Zero" the x
-    Mux16(a=x,b[0..15]=false,sel=zx,out=zdx); 
+    //zeros
+    Mux16(a=x, b=false, sel=zx, out=x1);
+    Mux16(a=y, b=false, sel=zy, out=y1);
     
-    //"Not" the x
-    Not16(in=zdx,out=notx);                  
-    
-    //chose x or notx and y or noty
-    Mux16(a=zdx,b=notx,sel=nx,out=ndx);      
-    Mux16(a=y,b[0..15]=false,sel=zy,out=zdy);
-    Not16(in=zdy,out=noty);
-    Mux16(a=zdy,b=noty,sel=ny,out=ndy);
+    //Notx
+    Not16(in=x1, out=nx1);
+    Mux16(a=x1, b=nx1, sel=nx, out=x2);
 
-    //x+y
-    Add16(a=ndx,b=ndy,out=xplusy);
-    
-    //x&y
-    And16(a=ndx,b=ndy,out=xandy);  
+    //Noty
+    Not16(in=y1, out=ny1);
+    Mux16(a=y1, b=ny1, sel=ny, out=y2);
 
-    //chose function
-    Mux16(a=xandy,b=xplusy,sel=f,out=fxy); 
+    //multiply
+    And16(a=x2, b=y2, out=xandy);
 
-    Not16(in=fxy,out=nfxy);      
-    Mux16(a=fxy,b=nfxy,sel=no,out=oo);  
+    //add
+    Add16(a=x2, b=y2, out=xaddy);
 
-    // zr 
-    Or16Way(in=oo,out=o);  
-    Not(in=o,out=zr);
+    //addormultiply
+    Mux16(a=xandy, b=xaddy, sel=f, out=fout);
 
-    //ng
-    And16(a[0..15]=true,b=oo,out[15]=ng,out[0..14]=drop); 
-    
-    //output
-    Or16(a=oo,b[0..15]=false,out=out);
+    //finalNot
+    Not16(in=fout, out=nfout);
+    Mux16(a=fout, b=nfout, sel=no, out=out);
 }
