@@ -27,14 +27,27 @@ CHIP Jump {
     OUT jump;           // true if a jump should be performed, false otherwise 
 
 PARTS:
-    Or(a=zr, b=ng, out=le);
-    Not(in=le, out=notle);
+    //j1 and j2 conditions
+    And(a=j1, b=ng, out=jumpj1);
+    And(a=j2, b=zr, out=jumpj2);
+    
+    //j3 condition
+    Not(in=zr, out=notzr);
+    Not(in=ng,out=ps);
+    And(a=notzr, b=ps, out=positive);
+    And(a=j3, b=positive,out=jumpj3);
 
-    And(a=j1, b=notle, out=outj1);
-    And(a=j2, b=zr, out=outj2);
-    And(a=j3, b=ng, out=outj3);
+    //combine exclusive conditions
+    Or(a=jumpj1, b=jumpj2, out=jumpj1OR2);
+    Or(a=jumpj1OR2, b=jumpj3, out=jumpex);
 
-    Or(a=outj1, b=outj2, out=outj1orj2);
-    Or(a=outj1orj2, b=outj3, out=jump);
+
+    //All j conditions
+    And(a=j1, b=j2, out=j1ANDj2);
+    And(a=j1ANDj2, b=j3, out=jumpall);
+
+    //combine final conditions
+    Or(a=jumpex, b=jumpall, out=jump);
+
     
 }
