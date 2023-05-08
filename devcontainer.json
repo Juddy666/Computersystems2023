@@ -1,0 +1,32 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+{
+	"name": "Computer Systems",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {
+	// 	"ghcr.io/devcontainers/features/java:1": {}
+	// }
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "uname -a",
+	"onCreateCommand": "sudo apt -y update; sudo apt -y install clang default-jdk-headless python3; sudo unzip /workspaces/*/n2ttools.zip -d /usr/local/share/ && sudo chmod +x /usr/local/share/n2ttools/*.sh && sudo ln -s /usr/local/share/n2ttools/Assembler.sh /usr/local/bin/Assembler && sudo ln -s /usr/local/share/n2ttools/CPUEmulator.sh /usr/local/bin/CPUEmulator && sudo ln -s /usr/local/share/n2ttools/HardwareSimulator.sh /usr/local/bin/HardwareSimulator && sudo ln -s /usr/local/share/n2ttools/JackCompiler.sh /usr/local/bin/JackCompiler && sudo ln -s /usr/local/share/n2ttools/TextComparer.sh /usr/local/bin/TextComparer && sudo ln -s /usr/local/share/n2ttools/VMEmulator.sh /usr/local/bin/VMEmulator",
+	
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"roblourens.vscode-nand2tetris-hdl"
+			]
+		}
+	},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
