@@ -3,28 +3,36 @@
 
 // Put your code here.
 
+
 @R1
-D=M
+D=M //storeR1 in D
+
 @ABS
 M=D
+
 @NEG
-D;JLT
+D;JLT //is D negative ?
+
 @ABS
-D=M
-@R0
-M=D
+D=M //if D is not negative jump to ABS
+
+@R0   
+M=D //store in R0
+
 (END)
-@END
+@END //termintate
 0;JMP
+
 (NEG)
-@ABS
-M=-M
+@ABS 
+M=-M //Negate the Value of the temporary variable (ABS)
+
 @ABS
 D=M
-@R0
-M=D
+
+@RO
+M=D // store the two'complement in R0
+
 (END)
 @END
 0;JMP
-(ABS)
-0
