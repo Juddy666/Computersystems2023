@@ -4,53 +4,52 @@
 // Put your code here.
 @R1
 D=M
-@R0
-M=D
-
-//R3 to the length
-
 @R2
-D=M
-@R3
-M=D
+D=D+M
 
-(LOOP)
-
-@R3
-D=M
-@END
-D;JEQ
-
-@R1
-D=M
-@R4
-M=D
-
+// Set R0 to maximum value
 @R0
-D=M
-@R4
-D=D-M
-@MIN
-D;JGT
+M=-1
 
-(MIN)
-@R4
-D=M
-@R0
-M=D
-@R1
-D=M
-@1
-A=A+1
-D=D+A
-@R1
-M=D
-@R3
-M=M-1
+// Loop through array elements
+(loop)
+    // Check if end of array is reached
+    @R2
+    D=M
+    @R1
+    D=D-M
+    @END
+    D;JLE
 
-@LOOP
-0;JMP
+    // Load element at current position
+    @R1
+    A=M
+    D=M
 
+    // Check if element is smaller than current smallest
+    @R0
+    D=D-M
+    @SMALLER
+    D;JLT
+
+    // Element is not smaller, continue to next element
+    @R1
+    M=M+1
+    @loop
+    0;JMP
+
+(SMALLER)
+    // Update current smallest element
+    @R0
+    M=D
+
+    // Move to next element
+    @R1
+    M=M+1
+    @loop
+    0;JMP
+
+// End of array reached
 (END)
 @END
 0;JMP
