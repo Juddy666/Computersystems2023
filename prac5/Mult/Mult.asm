@@ -20,22 +20,22 @@ D=M
 @STEP
 D;JGT
 
-// If it didn't jump, go to END.
+// If not go to END.
 @END
 0;JMP
 
 // Adds R1 to R2 and removes 1 from R0.
-// If R0 is more than 0 we step again.
+// If R0 is more than 0, loop again.
 (STEP)
     // Get R0.
     @R0
     D=M
 
-    // Add R1 to it.
+    // Add R1.
     @R1
     D=D+M
 
-    // And write the result back to R2.
+    // write the result back to R2.
     @R0
     M=D
 
