@@ -14,13 +14,22 @@ CompilerParser::CompilerParser(std::list<Token*> tokens){
  * Generates a parse tree for a single program
  * @return a ParseTree */
 ParseTree* CompilerParser::compileProgram() {
-    if(mustBe("keyword","class")!=NULL){
-    ParseTree* myTree = new ParseTree("keyword","class");
-    myTree->addChild(mustBe("identifier", "MyClass"));
+    
+    ParseTree* myTree = new ParseTree("class","class");
+    myTree->addChild(mustBe("keyword","class"));
+    Token* currToken = current();
+    
+    if(currToken->getType() == "identifier"){
+        myTree->addChild(currToken);
+        next();
+    }
+    else{
+        throw new ParseException();
+    }
     myTree->addChild(mustBe("symbol", "{"));
     myTree->addChild(mustBe("symbol", "}"));
     
-    return myTree;}
+    return myTree;
 }
 
 /**
@@ -214,7 +223,6 @@ Token* CompilerParser::mustBe(std::string expectedType, std::string expectedValu
        next();
        return currentToken;
     } else {
-        cout << "threw mustBE Exception" <<endl;
         throw new ParseException();
     }
     
@@ -229,3 +237,4 @@ Token* CompilerParser::mustBe(std::string expectedType, std::string expectedValu
 const char* ParseException::what() {
     return "An Exception occurred while parsing!";
 }
+
