@@ -4,6 +4,7 @@ using namespace std;
 
 /**
  * Constructor for the CompilerParser
+    
  * @param tokens A linked list of tokens to be parsed
  */
 CompilerParser::CompilerParser(std::list<Token*> tokens){
@@ -18,13 +19,13 @@ ParseTree* CompilerParser::compileProgram() {
     ParseTree* myTree = new ParseTree("class","class");
     myTree->addChild(mustBe("keyword","class"));
     Token* currToken = current();
-    
     if(currToken->getType() == "identifier"){
+    
         myTree->addChild(currToken);
         next();
     }
     else{
-        throw new ParseException();
+        throw ParseException();
     }
     myTree->addChild(mustBe("symbol", "{"));
     myTree->addChild(mustBe("symbol", "}"));
@@ -37,27 +38,33 @@ ParseTree* CompilerParser::compileProgram() {
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileClass() {
-    if(mustBe("keyword", "class")!=NULL){
-    ParseTree* myTree = new ParseTree("keyword","class");
-    myTree->addChild(mustBe("identifier", "MyClass"));
+    ParseTree* myTree = new ParseTree("class","class");
+    myTree->addChild(mustBe("keyword","class"));
+    Token* currToken = current();
+    if(currToken->getType() == "identifier"){
+        myTree->addChild(currToken);
+        next();
+    }
+    else{
+        throw ParseException();
+    }
+
     myTree->addChild(mustBe("symbol", "{"));
+    //staic or feild
     while(have("keyword", "static") || have("keyword", "field")) {
         ParseTree* varDec = compileClassVarDec();
         myTree->addChild(varDec);
     }
 
+    //subroutine
     while(have("keyword", "constructor") || have("keyword", "function") || have("keyword", "method")) {
         ParseTree* subDec = compileSubroutine();
         myTree->addChild(subDec);
     }
     
     myTree->addChild(mustBe("symbol", "}"));
-    
-    
-    
-    
    return myTree;
-   };
+
 }
 
 /**
@@ -65,7 +72,46 @@ ParseTree* CompilerParser::compileClass() {
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileClassVarDec() {
-    return NULL;
+    ParseTree* myTree = new ParseTree("classVarDec","classVarDec");
+    
+    //static or feild
+    if(have("keyword", "static")|| have("keyword", "field")){
+        myTree->addChild(current());
+         next();  
+    }
+    else{throw ParseException();}
+    
+    //type
+    if(have("keyword","int")||have("keyword","boolean")||have("keyword","char")){
+        myTree->addChild(current());
+        next();
+    }
+     else{throw ParseException();}
+    
+
+    //matchVarname
+    Token* currToken = current();
+    if(currToken->getType() == "identifier"){
+        myTree->addChild(currToken);
+        next();
+    }
+    else{throw ParseException();}
+
+    while(have("symbol", ",")) {
+        Token* comma = current();
+        next();
+        Token* currToken = current();
+    if(currToken->getType() == "identifier") {
+        myTree->addChild(comma);
+        myTree->addChild(currToken);
+        next();
+    } else {
+        throw ParseException();
+        }
+    }
+    myTree->addChild(mustBe("symbol",";"));
+
+    return myTree;
 }
 
 /**
@@ -73,7 +119,54 @@ ParseTree* CompilerParser::compileClassVarDec() {
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileSubroutine() {
-    return NULL;
+    ParseTree* myTree = new ParseTree("subroutine","subroutine");
+    //constructor function metthod
+    if(have("keyword", "constructor")|| have("keyword", "function")|| have("keyword","method")){
+        myTree->addChild(current());
+        next();  
+    }
+    else{throw ParseException();}
+    
+    
+    //void type
+    Token* currToken = current();
+     if(have("keyword", "void")|| have("keyword", "int")|| have("keyword","boolean")||have("keyword","char")||currToken->getType() == "identifier"){
+        myTree->addChild(current());
+        next();  
+    }
+    
+    else{throw ParseException();}
+   
+    //subroute name
+    currToken = current();
+    if(currToken->getType() == "identifier"){
+        myTree->addChild(currToken);
+        next();
+    }
+    else{
+        throw ParseException();
+        }
+
+
+      
+    //Parameter List
+    myTree->addChild(mustBe("symbol","("));
+    if(have("keyword","int")||have("keyword","boolean")||have("keyword","char")){
+    ParseTree* ParameterList = compileParameterList();
+        myTree->addChild(ParameterList);
+    }
+    myTree->addChild(mustBe("symbol",")"));
+    
+    //subroutinebody
+    if(have("symbol","{")){
+    ParseTree* subroutineBody= compileSubroutineBody();
+        myTree->addChild(subroutineBody);
+        }
+    else{
+        throw ParseException();
+    }
+    return myTree;
+    
 }
 
 /**
@@ -81,15 +174,69 @@ ParseTree* CompilerParser::compileSubroutine() {
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileParameterList() {
-    return NULL;
-}
+    ParseTree* myTree = new ParseTree("parameterList","parameterList");
 
+    //type Varname
+    if(have("keyword","int")||have("keyword","boolean")||have("keyword","char")){
+        myTree->addChild(current());
+        next();
+    }else{
+        throw ParseException();
+    }   
+
+    Token* currToken = current();
+    if(currToken->getType() == "identifier"){
+        myTree->addChild(currToken);
+        next();
+    }
+    else{
+        throw ParseException();
+        }
+
+    //, type Varname
+    while(have("symbol", ",")) {
+        Token* comma = current();
+        next();
+        Token* type = current();
+        bool istype = have("keyword", "void")|| have("keyword", "int")|| have("keyword","boolean")||have("keyword","char")||type->getType() == "identifier";
+        next();
+        Token* name = current();
+    if(name->getType() == "identifier"&&istype==true) {
+        myTree->addChild(comma);
+        myTree->addChild(type);
+        myTree->addChild(name);
+        next();
+    }
+    else {
+        throw ParseException();
+    }
+    }
+
+    return myTree;
+}
 /**
  * Generates a parse tree for a subroutine's body
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileSubroutineBody() {
-    return NULL;
+    ParseTree* myTree = new ParseTree("subroutineBody","subroutineBody");
+    myTree->addChild(mustBe("symbol","{"));
+    
+    //Var
+    while(have("keyword","var")){
+        ParseTree* VarDec = compileVarDec();
+        myTree->addChild(VarDec);
+    }
+
+    //statements
+    if(have("keyword","let")||have("keyword","if")||have("keyword","while")||have("keyword","do")||have("keyword","return")){
+         ParseTree* statements = compileStatements();
+        myTree->addChild(statements);
+    }
+   
+    myTree->addChild(mustBe("symbol","}"));
+    
+    return myTree;
 }
 
 /**
@@ -97,7 +244,44 @@ ParseTree* CompilerParser::compileSubroutineBody() {
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileVarDec() {
-    return NULL;
+    ParseTree* myTree = new ParseTree("varDec","varDec");
+    myTree->addChild(mustBe("keyword","var"));
+    
+    //type Var
+    Token* currentToken = current();
+    if(have("keyword","int")||have("keyword","boolean")||have("keyword","char")||currentToken->getType() == "identifier"){
+        myTree->addChild(current());
+        next();
+    }else{
+        throw ParseException();
+    }
+
+    Token* currToken = current();
+    if(currToken->getType() == "identifier"){
+        myTree->addChild(currToken);
+        next();
+    }
+    else{
+        throw ParseException();
+        }
+
+    //, Varname
+    while(have("symbol", ",")) {
+        Token* comma = current();
+        next();
+        Token* currToken = current();
+        if(currToken->getType() == "identifier") {
+            myTree->addChild(comma);
+            myTree->addChild(currToken);
+            next();
+        } else {
+            throw ParseException();
+        }
+    }
+  
+    myTree->addChild(mustBe("symbol",";"));
+    
+    return myTree;
 }
 
 /**
@@ -105,7 +289,9 @@ ParseTree* CompilerParser::compileVarDec() {
  * @return a ParseTree
  */
 ParseTree* CompilerParser::compileStatements() {
-    return NULL;
+    ParseTree* myTree = new ParseTree("statements","statments");
+    
+    return myTree;
 }
 
 /**
@@ -223,7 +409,7 @@ Token* CompilerParser::mustBe(std::string expectedType, std::string expectedValu
        next();
        return currentToken;
     } else {
-        throw new ParseException();
+        throw ParseException();
     }
     
     
