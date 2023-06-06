@@ -54,13 +54,52 @@ int main(int argc, char *argv[]) {
     // tokens.push_back(new Token("identifier", "b"));
     // tokens.push_back(new Token("symbol", ";"));
 
-    tokens.push_back(new Token("keyword", "if"));
+    // tokens.push_back(new Token("keyword", "if"));
+    // tokens.push_back(new Token("symbol", "("));
+    // tokens.push_back(new Token("keyword", "skip"));
+    // tokens.push_back(new Token("symbol", ")"));
+    // tokens.push_back(new Token("symbol", "{"));
+
+
+
+    // tokens.push_back(new Token("integerConstant", "1"));
+    // tokens.push_back(new Token("symbol", "+"));
+    // tokens.push_back(new Token("integerConstant", "2"));
+    // tokens.push_back(new Token("symbol", "("));
+    // tokens.push_back(new Token("symbol", "("));
+    tokens.push_back(new Token("identifier", "Main"));
+    tokens.push_back(new Token("symbol", "."));
+    tokens.push_back(new Token("identifier", "MyFunc"));
     tokens.push_back(new Token("symbol", "("));
-    tokens.push_back(new Token("keyword", "skip"));
+    tokens.push_back(new Token("integerConstant", "1"));
+    tokens.push_back(new Token("symbol", ","));
+    tokens.push_back(new Token("identifier", "Hello"));
     tokens.push_back(new Token("symbol", ")"));
-    tokens.push_back(new Token("symbol", "{"));
-    tokens.push_back(new Token("symbol", "}"));
-    
+    // tokens.push_back(new Token("symbol", ")"));
+    // tokens.push_back(new Token("symbol", ">"));
+    // tokens.push_back(new Token("integerConstant", "5"));
+    // tokens.push_back(new Token("symbol", ")"));
+    // tokens.push_back(new Token("symbol", "="));
+    // tokens.push_back(new Token("keyword", "true"));
+
+    // tokens.push_back(new Token("keyword", "else"));
+    // tokens.push_back(new Token("symbol", "{"));
+    // tokens.push_back(new Token("symbol", "}"));
+    // tokens.push_back(new Token("symbol", "} ")); 
+    // tokens.push_back(new Token("keyword", "else"));
+    // tokens.push_back(new Token("symbol", "{"));
+    // tokens.push_back(new Token("keyword", "if"));
+    // tokens.push_back(new Token("symbol", "("));
+    // tokens.push_back(new Token("keyword", "skip"));
+    // tokens.push_back(new Token("symbol", ")"));
+    // tokens.push_back(new Token("symbol", "{"));
+    // tokens.push_back(new Token("symbol", "}")); 
+    // tokens.push_back(new Token("keyword", "else"));
+    // tokens.push_back(new Token("symbol", "{"));
+    // tokens.push_back(new Token("symbol", "}"));
+    // tokens.push_back(new Token("symbol", "}")); 
+
+
     // tokens.push_back(new Token("keyword", "do"));
     // tokens.push_back(new Token("keyword", "skip"));
     // tokens.push_back(new Token("symbol", ";"));
@@ -68,7 +107,7 @@ int main(int argc, char *argv[]) {
 
     try {
         CompilerParser parser(tokens);
-        ParseTree* result = parser.compileIf();
+        ParseTree* result = parser.compileExpression();
         if (result != NULL){
             cout << result->tostring() << endl;
         }
